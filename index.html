@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eagle BOM Manager · NoABS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main>
+    <div id="drop-zone">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="12" y1="18" x2="12" y2="12"/>
+        <polyline points="9 15 12 12 15 15"/>
+      </svg>
+      <p>Drop <strong>.sch</strong> file here</p>
+      <label class="browse-btn" for="file-input">Browse</label>
+      <input type="file" id="file-input" accept=".sch">
+    </div>
+
+    <div id="bom-section" class="hidden">
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <span id="file-name"></span>
+          <span id="stats"></span>
+        </div>
+        <div class="toolbar-right">
+          <button id="btn-undo" disabled>Undo</button>
+          <button id="btn-add-col">Add column</button>
+          <button id="btn-import-csv">Import warehouse CSV</button>
+          <button id="btn-xlsx">Export .xlsx</button>
+          <button id="btn-scr" class="btn-primary">Export .scr</button>
+        </div>
+        <input type="file" id="csv-input" accept=".csv" style="display:none">
+      </div>
+      <div class="table-wrap">
+        <table id="bom-table">
+          <thead id="bom-head"></thead>
+          <tbody id="bom-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- .scr export config modal -->
+  <div id="scr-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h2 class="modal-title">Export .scr</h2>
+      <div class="modal-select-links">
+        <a id="scr-sel-all">All</a> · <a id="scr-sel-none">None</a>
+      </div>
+      <div id="scr-attr-list" class="attr-checklist"></div>
+      <div class="modal-actions">
+        <button id="scr-cancel">Cancel</button>
+        <button id="scr-confirm" class="btn-primary">Export</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add column modal -->
+  <div id="add-col-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h2 class="modal-title">Add attribute column</h2>
+      <label class="modal-label" for="add-col-input">Column name</label>
+      <input type="text" id="add-col-input" class="modal-text-input" placeholder="e.g. ALT, STOCK#, NOTE">
+      <p id="add-col-error" class="modal-error hidden"></p>
+      <div class="modal-actions">
+        <button id="add-col-cancel">Cancel</button>
+        <button id="add-col-confirm" class="btn-primary">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Warehouse import modal -->
+  <div id="import-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h2 class="modal-title">Import warehouse data</h2>
+      <p id="import-no-common" class="modal-warning hidden">
+        No common fields found between this CSV and the current BOM.
+        Rename a column in your CSV to match a BOM attribute name (e.g. MANF#).
+      </p>
+      <div id="import-fields">
+        <label class="modal-label" for="import-key-select">Match by field</label>
+        <select id="import-key-select" class="modal-select"></select>
+        <p id="import-match-count" class="import-match-count"></p>
+        <label class="modal-checkbox-label">
+          <input type="checkbox" id="import-overwrite">
+          Overwrite existing values
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button id="import-cancel">Cancel</button>
+        <button id="import-confirm" class="btn-primary">Import</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Merge conflict modal -->
+  <div id="merge-modal" class="modal-overlay hidden">
+    <div class="modal-box modal-box--merge">
+      <h2 class="modal-title">Resolve attribute conflict</h2>
+      <p class="modal-subtitle">Pick which value to keep for each conflicting attribute.</p>
+      <div id="merge-conflict-list" class="merge-conflict-list"></div>
+      <div class="modal-actions">
+        <button id="merge-cancel">Cancel</button>
+        <button id="merge-confirm" class="btn-primary">Merge</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Variant picker modal -->
+  <div id="variant-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h2 class="modal-title">Export .xlsx</h2>
+      <label class="modal-label" for="variant-select">Assembly variant</label>
+      <select id="variant-select" class="modal-select"></select>
+      <p class="modal-warning hidden"></p>
+      <div class="modal-actions">
+        <button id="modal-cancel">Cancel</button>
+        <button id="modal-export" class="btn-primary">Export</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="js/parser.js"></script>
+  <script src="js/bom.js"></script>
+  <script src="js/table.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/warehouse.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
